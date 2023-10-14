@@ -1,46 +1,37 @@
 version: "2"
- 
-services: 
-    # Start: Replace this block with your VPN servie provider
-    # Noted that 'privileged: true' in your VPN config is needed for docker-ap to manipulate AP
-    surfshark:
-        image: ilteoood/docker-surfshark
-        container_name: surfshark
-        environment: 
-            - SURFSHARK_USER=YOUR_USERNAME
-            - SURFSHARK_PASSWORD=YOUR_PASSWORD
-            - SURFSHARK_COUNTRY=jp
-            - SURFSHARK_CITY=tok
-            - CONNECTION_TYPE=udp
-            - LAN_NETWORK=192.168.1.0/24
-        cap_add: 
-            - NET_ADMIN
-        devices:
-            - /dev/net/tun
-        privileged: true
-        restart: unless-stopped
-    # End:: Replace this block with your VPN servie provider
-    docker-ap:
-      build:
-        context: docker-ap
-        dockerfile: Dockerfile
-      container_name: docker-ap
-      image: dokcer-ap
-      restart: unless-stopped
-      privileged: true
-      depends_on: 
-        surfshark:
-          condition: service_healthy
-      network_mode: service:surfshark
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-        - /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd
-      environment:
-        - INTERFACE=wlan0
-        - OUTGOINGS=tun0,eth0
-        - CHANNEL=36
-        - WPA_PASSPHRASE=password
-        - SSID=docker-ap
-        - SUBNET=192.168.2.0
-        - AP_ADDR=192.168.2.1
-        - DNS_ADDRESSES=192.168.1.1
+
+services:
+  # Noted that 'privileged: true' in your VPN config is needed for docker-ap to manipulate AP
+  nordvpn:
+    image: ghcr.io/bubuntux/nordvpn
+    container_name: nordvpn
+    environment:
+      - TOKEN=...
+      - CONNECT=Hong_Kong
+      - TECHNOLOGY=NordLynx
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    privileged: true
+    restart: unless-stopped
+  docker-ap:
+    build:
+      context: docker-ap
+      dockerfile: Dockerfile
+    container_name: docker-ap
+    image: docker-ap
+    restart: unless-stopped
+    privileged: true
+    depends_on:
+      - nordvpn
+    network_mode: service:nordvpn
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd
+    environment:
+      - INTERFACE=wlan0
+      - OUTGOINGS=nordlynx
+      - CHANNEL=36
+      - WPA_PASSPHRASE=passw0rd
+      - SSID=docker-ap
+      - DNS_ADDRESSES=103.86.96.100,103.86.99.100 # NordVPN DNSs
