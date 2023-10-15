@@ -35,3 +35,4 @@ services:
       - WPA_PASSPHRASE=passw0rd
       - SSID=docker-ap
       - DNS_ADDRESSES=103.86.96.100,103.86.99.100 # NordVPN DNSs
+      - COUNTRY_CODE=GB

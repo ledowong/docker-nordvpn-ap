@@ -16,6 +16,7 @@ true ${WPA_PASSPHRASE:=passw0rd}
 true ${HW_MODE:=a}
 true ${DRIVER:=nl80211}
 true ${DNS_ADDRESSES=1.1.1.1,1.0.0.1}
+true ${COUNTRY_CODE=US}
 
 # Attach interface to container
 echo "Attaching interface to container"
@@ -37,7 +38,7 @@ CONTAINER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${CONTAINER_ID})
 
 if $(ip a | grep -q "${INTERFACE}"); then
   echo "Interface exists~ No need to retrieve again~~"
-else	
+else
   echo "Attaching ${INTERFACE}"
   docker run -t --privileged --net=host --pid=host --rm --entrypoint /bin/sh ${CONTAINER_IMAGE} -c "
     PHY=\$(echo phy\$(iw dev ${INTERFACE} info | grep wiphy | tr ' ' '\n' | tail -n 1))
@@ -51,6 +52,7 @@ ip link set ${INTERFACE} name ${INTERFACE}
 if [ ! -f "/etc/hostapd.conf" ] ; then
     cat > "/etc/hostapd.conf" <<EOF
 interface=${INTERFACE}
+COUNTRY_CODE=${COUNTRY_CODE}
 driver=${DRIVER}
 ssid=${SSID}
 hw_mode=${HW_MODE}
@@ -63,7 +65,7 @@ wpa_pairwise=TKIP CCMP
 wpa_pairwise=CCMP
 rsn_pairwise=CCMP
 wpa_ptk_rekey=600
-wmm_enabled=1 
+wmm_enabled=1
 
 macaddr_acl=0
 ignore_broadcast_ssid=0
@@ -72,7 +74,7 @@ wmm_enabled=1
 # AC
 ieee80211ac=1
 require_vht=1
-ieee80211d=0
+ieee80211d=1
 ieee80211h=0
 EOF
 
@@ -82,11 +84,11 @@ fi
 rfkill unblock wlan
 
 # down interface if it is up
-ip a | grep -Eq ": ${INTERFACE}:.*state UP" && ip link set ${INTERFACE} down && echo "Down ${INTERFACE} ..." 
+ip a | grep -Eq ": ${INTERFACE}:.*state UP" && ip link set ${INTERFACE} down && echo "Down ${INTERFACE} ..."
 
 echo "Setting interface ${INTERFACE}"
 
-# Setup interface and restart DHCP service 
+# Setup interface and restart DHCP service
 ip link set ${INTERFACE} up
 ip addr flush dev ${INTERFACE}
 ip addr add ${AP_ADDR}/24 dev ${INTERFACE}
@@ -94,15 +96,15 @@ ip addr add ${AP_ADDR}/24 dev ${INTERFACE}
 # NAT settings
 echo "NAT settings ip_dynaddr, ip_forward"
 
-for i in ip_dynaddr ip_forward ; do 
+for i in ip_dynaddr ip_forward ; do
   if [ $(cat /proc/sys/net/ipv4/$i) ]; then
-    echo $i already 1 
+    echo $i already 1
   else
     echo "1" > /proc/sys/net/ipv4/$i
   fi
 done
 
-cat /proc/sys/net/ipv4/ip_dynaddr 
+cat /proc/sys/net/ipv4/ip_dynaddr
 cat /proc/sys/net/ipv4/ip_forward
 
 if [ "${OUTGOINGS}" ] ; then
@@ -145,4 +147,4 @@ echo "Starting DHCP server .."
 dhcpd ${INTERFACE}
 
 echo "Starting HostAP daemon ..."
-/usr/sbin/hostapd /etc/hostapd.conf 
+/usr/sbin/hostapd /etc/hostapd.conf
