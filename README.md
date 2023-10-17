@@ -18,7 +18,9 @@
 9. SSH into rasp pi.
 10. Clone this project
     - Run `git clone https://github.com/ledowong/docker-nordvpn-ap.git`
-11. Edit `docker-nordvpn-ap/docker-compose.yml`
-    - Replace `<nord_von_token>`
-    - 
-
+11. Go into the project folder
+    - Run `cd docker-nordvpn-ap`
+12. Edit `docker-compose.yml`
+    - Replace `<nord_von_token>`, `<country>`, `<ssid>`, `<wifi_password>`, `<wifi_country_code>`
+13. Start
+    - Run `docker compose up -d`
