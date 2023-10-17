@@ -6,8 +6,8 @@ services:
     image: ghcr.io/bubuntux/nordvpn
     container_name: nordvpn
     environment:
-      - TOKEN=<nord_von_token>
-      - CONNECT=Hong_Kong
+      - TOKEN=<nord_von_token>   # Required
+      - CONNECT=<country>        # Required, e.g. United_Kingdom (https://nordvpn.com/servers/tools/)
       - TECHNOLOGY=NordLynx
     cap_add:
       - NET_ADMIN
@@ -32,7 +32,7 @@ services:
       - INTERFACE=wlan0
       - OUTGOINGS=nordlynx
       - CHANNEL=36
-      - WPA_PASSPHRASE=passw0rd
-      - SSID=docker-ap
+      - WPA_PASSPHRASE=<wifi_password>   # Required
+      - SSID=<ssid>                      # Required      
       - DNS_ADDRESSES=103.86.96.100,103.86.99.100 # NordVPN DNSs
-      - COUNTRY_CODE=GB
+      - COUNTRY_CODE=<wifi_country_code> # Required, e.g. GB
