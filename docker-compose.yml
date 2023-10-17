@@ -6,7 +6,7 @@ services:
     image: ghcr.io/bubuntux/nordvpn
     container_name: nordvpn
     environment:
-      - TOKEN=...
+      - TOKEN=<nord_von_token>
       - CONNECT=Hong_Kong
       - TECHNOLOGY=NordLynx
     cap_add:
