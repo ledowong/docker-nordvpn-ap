@@ -23,5 +23,7 @@
     - Run `cd docker-nordvpn-ap`
 12. Edit `docker-compose.yml`
     - Replace `<nord_von_token>`, `<country>`, `<ssid>`, `<wifi_password>`, `<wifi_country_code>`
-13. Start
+13. Change ap start script file permission
+    - Run `chmod 755 docker-ap/wlanstart.sh`
+15. Start
     - Run `docker compose up -d`
