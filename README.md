@@ -27,3 +27,7 @@
     - Run `chmod 755 docker-ap/wlanstart.sh`
 15. Start
     - Run `docker compose up -d`
+
+## iPhone
+In WiFi settings, turn off:
+- Limi IP Address Tracking
