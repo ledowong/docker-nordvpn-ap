@@ -52,7 +52,7 @@ ip link set ${INTERFACE} name ${INTERFACE}
 if [ ! -f "/etc/hostapd.conf" ] ; then
     cat > "/etc/hostapd.conf" <<EOF
 interface=${INTERFACE}
-COUNTRY_CODE=${COUNTRY_CODE}
+country_code=${COUNTRY_CODE}
 driver=${DRIVER}
 ssid=${SSID}
 hw_mode=${HW_MODE}
