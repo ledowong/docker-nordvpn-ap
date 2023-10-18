@@ -1,5 +1,6 @@
 ## Prepare SD Card
 1. Install Raspberry Pi OS Lite (64-bit) using [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
+    - Select ⚙️, Enable SSH
 
 ## Setup Raspberry Pi
 1. SSH into rasp pi.
