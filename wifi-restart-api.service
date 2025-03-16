@@ -1,0 +1,12 @@
+[Unit]
+Description=WiFi Restart API
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=<working directory>
+ExecStart=flask-env/bin/python app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
