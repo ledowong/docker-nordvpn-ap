@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:3.19
 
 MAINTAINER Jaka Hudoklin <offlinehacker@users.noreply.github.com>
 
