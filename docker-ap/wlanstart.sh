@@ -36,7 +36,7 @@ fi
 CONTAINER_PID=$(docker inspect -f '{{.State.Pid}}' ${CONTAINER_ID})
 CONTAINER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${CONTAINER_ID})
 
-if $(ip a | grep -q "${INTERFACE}"); then
+if ip a | grep -q "${INTERFACE}"; then
   echo "Interface exists~ No need to retrieve again~~"
 else
   echo "Attaching ${INTERFACE}"
@@ -97,8 +97,9 @@ ip addr add ${AP_ADDR}/24 dev ${INTERFACE}
 echo "NAT settings ip_dynaddr, ip_forward"
 
 for i in ip_dynaddr ip_forward ; do
-  if [ $(cat /proc/sys/net/ipv4/$i) ]; then
-    echo $i already 1
+  value=$(cat /proc/sys/net/ipv4/$i)
+  if [ "$value" = "1" ]; then
+    echo "$i already 1"
   else
     echo "1" > /proc/sys/net/ipv4/$i
   fi
@@ -134,12 +135,14 @@ else
 fi
 echo "Configuring DHCP server .."
 
+SUBNET_PREFIX=$(sed 's/\.[^.]*$//' <<< "${SUBNET}")
+
 cat > "/etc/dhcp/dhcpd.conf" <<EOF
 option domain-name-servers ${DNS_ADDRESSES};
 option subnet-mask 255.255.255.0;
 option routers ${AP_ADDR};
 subnet ${SUBNET} netmask 255.255.255.0 {
-  range ${SUBNET::-1}100 ${SUBNET::-1}200;
+  range ${SUBNET_PREFIX}.100 ${SUBNET_PREFIX}.200;
 }
 EOF
 

@@ -3,9 +3,10 @@ Description=WiFi Restart API
 After=network.target
 
 [Service]
+Type=simple
 User=root
-WorkingDirectory=<working directory>
-ExecStart=flask-env/bin/python app.py
+WorkingDirectory=/home/user/docker-nordvpn-ap
+ExecStart=/home/user/docker-nordvpn-ap/flask-env/bin/python /home/user/docker-nordvpn-ap/app.py
 Restart=always
 
 [Install]

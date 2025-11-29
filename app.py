@@ -1,6 +1,9 @@
-from flask import Flask, jsonify, request
-import subprocess
 import os
+import subprocess
+from flask import Flask, jsonify, request
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+AUTH_TOKEN = os.environ.get("X_AUTH_TOKEN", "password")
 
 app = Flask(__name__)
 
@@ -29,7 +32,7 @@ def restart():
     auth_header = request.headers.get('X-Auth-Token')
 
     # Check if the header exists and matches the expected token format
-    if not auth_header or auth_header != "password":
+    if not auth_header or auth_header != AUTH_TOKEN:
         return jsonify({
             "status": "unauthorized", "message": "Unauthorized"
         }), 401
@@ -47,12 +50,9 @@ def restart():
         }), 200
 
     try:
-        # Define your working directory
-        work_dir = '/home/ledowong/docker-vpn-ap'
-
         process = subprocess.Popen(
             "./restart.sh",
-            cwd=work_dir,
+            cwd=BASE_DIR,
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
